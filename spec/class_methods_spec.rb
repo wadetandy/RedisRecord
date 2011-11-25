@@ -5,8 +5,8 @@ describe "RedisRecord model class methods" do
   end
 
   before(:each) do
-    class TestClass
-      include RedisRecord
+    class TestClass < RedisRecord::Base
+#      include RedisRecord
     end
 
     @test = TestClass.new
@@ -60,3 +60,4 @@ describe "RedisRecord model class methods" do
     Object.send(:remove_const, :TestClass)
   end
 end
+

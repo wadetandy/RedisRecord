@@ -3,6 +3,7 @@ require 'active_support/core_ext/string/inflections'
 require 'active_support/core_ext/kernel'
 
 module RedisRecord
+  class Base
   def redis
     RedisRecord::Backend::redis_server
   end
@@ -24,5 +25,7 @@ module RedisRecord
     def id=(val)
       @id = val
     end
+
+  end
 end
 

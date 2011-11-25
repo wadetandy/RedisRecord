@@ -1,6 +1,14 @@
 module RedisRecord
+  def self.included(base)
+    base.extend(ClassMethods)
+  end
+
   module ClassMethods
 
+  end
+
+  class Base
+    class << self
     # Allow declaration of class properties that are backed by
     # a Redis store
     # 
@@ -115,6 +123,7 @@ module RedisRecord
       @@properties ||= Hash.new
 
       @@properties[self.name] ||= Set.new << :id
+    end
     end
   end
 end

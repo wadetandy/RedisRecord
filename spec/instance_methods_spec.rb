@@ -5,9 +5,7 @@ describe "RedisRecord model instance methods" do
   end
 
   before(:each) do
-    class TestClass
-      include RedisRecord
-
+    class TestClass < RedisRecord::Base
       property :name
     end
     @test = TestClass.new
