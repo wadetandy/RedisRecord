@@ -7,7 +7,7 @@ module RedisRecord
     # To declare a property, do the following in the class definition:
     #   property :property_name
     def property (*args)
-      klass = self.name.downcase
+      klass = self.name.underscore
       options = args.extract_options!
       searchable = false
 
