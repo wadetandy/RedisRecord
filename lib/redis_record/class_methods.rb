@@ -1,5 +1,3 @@
-require 'redis'
-
 module RedisRecord
   module ClassMethods
 
@@ -26,7 +24,8 @@ module RedisRecord
       end
 
       args.each do |sym|
-        sym = sym.to_sym # Make sure we consistently use symbols
+        # Make sure we consistently use symbols, otherwise we could end up with duplicate properties
+        sym = sym.to_sym 
 
         if properties.include? sym
           raise PropertyExists
@@ -35,7 +34,7 @@ module RedisRecord
         properties << sym
 
         define_method(sym) do
-          redis.get "#{klass}:id:#{id}:#{sym}"
+          redis.hget "#{klass}:id:#{id}:hash", sym
         end
 
         define_method("#{sym}=") do |value|
@@ -43,7 +42,7 @@ module RedisRecord
             send("check_#{sym}_uniqueness", value)
           end
 
-          redis.set "#{klass}:id:#{id}:#{sym}", value
+          redis.hset "#{klass}:id:#{id}:hash", sym, value
         end
 
         # After creating methods for every case, deal with other optional methods
@@ -84,8 +83,8 @@ module RedisRecord
       found_id = redis.get "#{self.name.underscore}:id:#{id}"
 
       if found_id
-        object = self.new# :id => found_id        
-        object.id = found_id
+        object = self.new
+        object.send(:id=, found_id.to_i)
         object
       end
     end
@@ -97,7 +96,7 @@ module RedisRecord
       obj_list = []
       id_list.each do |obj_id|
         obj = self.new
-        obj.id = obj_id
+        obj.send(:id=, obj_id.to_i)
         obj_list << obj
       end
 
@@ -115,7 +114,7 @@ module RedisRecord
     def properties
       @@properties ||= Hash.new
 
-      @@properties[self.name] ||= Set.new
+      @@properties[self.name] ||= Set.new << :id
     end
   end
 end

@@ -41,7 +41,7 @@ Additionally, all RedisRecord models have an `id` property that is automatically
     emp = Employee.new
     
     emp.id      # => 3
-    emp.id      # => NoMethodError: undefined method 'id=' for #<Employee:0x9023>
+    emp.id      # => NoMethodError: protected method `id=' called for #<Employee:0x9023>
 
 ##Search
 
