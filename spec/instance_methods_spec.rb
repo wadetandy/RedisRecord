@@ -7,8 +7,9 @@ describe "RedisRecord model instance methods" do
   before(:each) do
     class TestClass
       include RedisRecord
-    end
 
+      property :name
+    end
     @test = TestClass.new
 
     @redis_mock = mock(Redis)
@@ -21,6 +22,20 @@ describe "RedisRecord model instance methods" do
 
   it "should use a custom redis instance if one is declared" do
     @test.redis.should eq @redis_mock
+  end
+
+  it "should be able to set a property" do
+    @redis_mock.should_receive(:hset).with("test_class:id:3:hash", :name, "Test Name")
+    @test.send(:id=, 3)
+
+    @test.name = "Test Name"
+  end
+
+  it "should be able to get a property" do
+    @redis_mock.should_receive(:hget).with("test_class:id:3:hash", :name).and_return("Test Name")
+    @test.send(:id=, 3)
+
+    @test.name.should eq "Test Name"
   end
 
   after(:each) do
