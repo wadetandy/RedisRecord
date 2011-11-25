@@ -8,9 +8,9 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Wade Tandy"]
   s.email       = ["wade@wadetandy.com"]
-  s.homepage    = ""
-  s.summary     = %q{Ruby object storage system built on Redis}
-  s.description = %q{TODO: Write a gem description}
+  s.homepage    = "http://github.com/wadetandy/RedisRecord"
+  s.summary     = "Ruby object storage system built on Redis"
+  s.description = "Ruby object storage system built on Redis"
 
   s.rubyforge_project = "redis_record"
 
