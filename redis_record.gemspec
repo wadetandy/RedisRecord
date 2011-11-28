@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   # Dependencies
   s.add_dependency "redis"
   s.add_dependency "active_support"
-  s.add_dependency "active_model"
+  s.add_dependency "activemodel"
 
   s.add_development_dependency('rspec', ["~> 2.6.0"])
 end
