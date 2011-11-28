@@ -22,4 +22,5 @@ Gem::Specification.new do |s|
   # Dependencies
   s.add_dependency "redis"
   s.add_dependency "active_support"
+  s.add_dependency "active_model"
 end
