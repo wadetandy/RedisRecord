@@ -5,12 +5,11 @@ RedisRecord is a ruby gem created to allow developers to easily store model data
 
 #Basic Usage
 
-To use RedisRecord in your own models, you should require the gem and include the RedisRecord module in your class definition:
+To use RedisRecord in your own models, you should require the gem and have create a subclass of RedisRecord::Base:
 
     require 'redis_record'
 
-    class Employee
-      include RedisRecord
+    class Employee < RedisRecord::Base
 
       # Implementation details
 
@@ -20,9 +19,7 @@ Once you have included the RedisRecord module, you may declare the properties of
 
     require 'redis_record'
 
-    class Employee
-      include RedisRecord
-
+    class Employee < RedisRecord::Base
       property :name
     end
 
@@ -34,8 +31,7 @@ Once you have included the RedisRecord module, you may declare the properties of
 
 Additionally, all RedisRecord models have an `id` property that is automatically created.  This property differs from the others, however, in that it is read only:
 
-    class Employee
-      include RedisRecord
+    class Employee < RedisRecord::Base
     end
 
     emp = Employee.new
@@ -47,9 +43,7 @@ Additionally, all RedisRecord models have an `id` property that is automatically
 
 Any model that uses RedisRecord gets the ability to search for objects by the `id` property:
 
-    class Employee
-      include RedisRecord
-
+    class Employee < RedisRecord::Base
       property :name
     end
 
@@ -70,3 +64,13 @@ You may also retrieve all instances of a given class:
         # Do stuff
     end
 
+License & Legal
+==============
+
+*Copyright 2011 Wade Tandy.  All Rights Reserved.
+
+*Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:*
+
+*The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.*
+
+*THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*
