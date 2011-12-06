@@ -9,12 +9,9 @@ describe "RedisRecord model instance methods" do
       property :name
     end
     @test = TestClass.new
-
-    @redis_mock = mock(Redis)
-    RedisRecord::Backend::redis_server = @redis_mock
   end
 
-  it "should have an immutable id" do
+  it "should raise an error when someone tries to change the id" do
     lambda {@test.id = 4}.should raise_error NoMethodError, /protected method `id='/
   end
 
@@ -23,17 +20,17 @@ describe "RedisRecord model instance methods" do
   end
 
   it "should be able to set a property" do
-    @redis_mock.should_receive(:hset).with("test_class:id:3:hash", :name, "Test Name")
     @test.send(:id=, 3)
 
-    @test.name = "Test Name"
+    @test.name = "name"
+    @test.name.should eq "name"
   end
 
   it "should be able to get a property" do
-    @redis_mock.should_receive(:hget).with("test_class:id:3:hash", :name).and_return("Test Name")
+    @redis_mock.hset "test_class:id:3:hash", :name, "name"
     @test.send(:id=, 3)
 
-    @test.name.should eq "Test Name"
+    @test.name.should eq "name"
   end
 
   after(:each) do

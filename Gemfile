@@ -9,4 +9,5 @@ gem "activemodel", "~> 3.0.0"
 group :test do
   gem "rspec", "~> 2.6.0"
   gem "test-unit"
+  gem "mock_redis", :git => "https://github.com/causes/mock_redis.git"
 end

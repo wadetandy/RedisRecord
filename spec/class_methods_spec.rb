@@ -6,13 +6,9 @@ describe "RedisRecord model class methods" do
 
   before(:each) do
     class TestClass < RedisRecord::Base
-#      include RedisRecord
     end
 
     @test = TestClass.new
-
-    @redis_mock = mock(Redis)
-    RedisRecord::Backend::redis_server = @redis_mock
   end
 
   it "should allow a property to be declared" do
@@ -37,10 +33,15 @@ describe "RedisRecord model class methods" do
   end
 
   it "should be searchable by id" do
-    @redis_mock.should_receive(:get).with("test_class:id:4").and_return(4)
+    @redis_mock.set "test_class:id:4", 4
     
     result = TestClass.find(4)
     result.id.should eq 4
+  end
+
+  it "should be nil if the requested id isn't found" do
+    result = TestClass.find(4)
+    result.should eq nil
   end
 
   it "should be able to retrieve all objects" do
