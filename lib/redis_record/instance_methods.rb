@@ -21,6 +21,10 @@ module RedisRecord
       self.class == other.class and @id == other.id
     end
 
+    def persisted?
+      @id ? true : false
+    end
+
     protected
       def id=(val)
         @id = val

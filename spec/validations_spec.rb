@@ -16,7 +16,24 @@ describe "RedisRecord Validations" do
     end
 
     @test.valid?.should eq false
+    @test.errors[:name].any?.should eq true
     @test.name = "name"
+    @test.valid?.should eq true
+    @test.errors[:name].any?.should eq false
+  end
+
+  it "should set error messages on validation errors" do
+    class TestClass < RedisRecord::Base
+      property :size
+
+      validates :size, :inclusion => { :in => %w(small medium large), :message => "%{value} is not a valid size"}
+    end
+
+    @test.size = "tiny"
+    @test.valid?.should eq false
+    @test.errors[:size][0].should eq "tiny is not a valid size"
+
+    @test.size = "small"
     @test.valid?.should eq true
   end
 
