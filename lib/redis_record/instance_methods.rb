@@ -9,13 +9,29 @@ module RedisRecord
     end
 
     def initialize(attributes = nil)
+      @attributes = Hash.new
+      self.class.properties.each do |key|
+        @attributes[key] = nil
+      end
+
       assign_attributes(attributes) if attributes
     end
 
+    # Returns true if the given attribute is in the attributes hash
+    def has_attribute?(attr_name)
+      @attributes.has_key?(attr_name.to_sym)
+    end
+
+    # Returns an array of names for the attributes available on this object.
+    def attribute_names
+      @attributes.keys
+    end
+
     # Allows you to set all the attributes at once by passing in a hash with keys
-    # matching the attribute names (which again matches the column names).
+    # matching the attribute names (which again matches the property names).
     #
     #   class User < RedisRecord::Base
+    #     property :username
     #   end
     #
     #   user = User.new

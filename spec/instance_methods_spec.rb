@@ -30,6 +30,15 @@ describe "RedisRecord model instance methods" do
     @user.email.should eq "harry.burns@gmail.com"
   end
 
+  it "should be able to query for all attribute names" do
+    @user.attribute_names.to_set.should eq [:email, :name].to_set
+  end
+
+  it "should be able query if single attribute exists" do
+    @user.has_attribute?(:name).should eq true    
+    @user.has_attribute?(:non_existant).should eq false
+  end
+
   it "should raise an error when someone tries to change the id" do
     lambda {@user.id = 4}.should raise_error NoMethodError, /protected method `id='/
   end
