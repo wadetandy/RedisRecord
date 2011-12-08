@@ -8,6 +8,35 @@ module RedisRecord
       RedisRecord::Backend::redis_server
     end
 
+    def initialize(attributes = nil)
+      assign_attributes(attributes) if attributes
+    end
+
+    # Allows you to set all the attributes at once by passing in a hash with keys
+    # matching the attribute names (which again matches the column names).
+    #
+    #   class User < RedisRecord::Base
+    #   end
+    #
+    #   user = User.new
+    #   user.attributes = { :username => 'Phusion'}
+    #   user.username   # => "Phusion"
+    def attributes=(new_attributes)
+      return unless new_attributes.is_a?(Hash)
+
+      assign_attributes(new_attributes)
+    end
+
+    def assign_attributes(new_attributes)
+      return unless new_attributes
+
+      new_attributes.each do |key, value|
+        if self.methods.include? "#{key}="
+          self.send("#{key}=", value)
+        end
+      end
+    end
+
     def id
       if !@id
         @id ||= redis.incr "#{self.class.name.underscore}:counter"
