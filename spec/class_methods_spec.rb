@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "RedisRecord model class methods" do
+describe RedisRecord::Base do
   before(:all) do
   end
 

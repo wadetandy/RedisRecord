@@ -1,6 +1,5 @@
 require 'redis'
 require 'active_support/core_ext/string/inflections'
-require 'active_support/core_ext/kernel'
 
 module RedisRecord
   class Base
@@ -32,25 +31,75 @@ module RedisRecord
     #
     #   class User < RedisRecord::Base
     #     property :username
+    #     property :is_admin?
+    # 
+    #     attr_protected :is_admin?
     #   end
     #
     #   user = User.new
     #   user.attributes = { :username => 'Phusion'}
     #   user.username   # => "Phusion"
+    #   user.is_admin?  # => false
     def attributes=(new_attributes)
       return unless new_attributes.is_a?(Hash)
 
       assign_attributes(new_attributes)
     end
-
-    def assign_attributes(new_attributes)
+    # Allows you to set all the attributes for a particular mass-assignment
+    # security role by passing in a hash of attributes with keys matching
+    # the attribute names (which again matches the column names) and the role
+    # name using the :as option.
+    #
+    # To bypass mass-assignment security you can use the :without_protection => true
+    # option.
+    #
+    #   class User < ActiveRecord::Base
+    #     property :name
+    #     property :email
+    #
+    #     attr_accessible :name
+    #     attr_accessible :name, :is_admin, :as => :admin
+    #   end
+    #
+    #   user = User.new
+    #   user.assign_attributes({ :name => 'Josh', :is_admin => true })
+    #   user.name       # => "Josh"
+    #   user.is_admin?  # => false
+    #
+    #   user = User.new
+    #   user.assign_attributes({ :name => 'Josh', :is_admin => true }, :as => :admin)
+    #   user.name       # => "Josh"
+    #   user.is_admin?  # => true
+    #
+    #   user = User.new
+    #   user.assign_attributes({ :name => 'Josh', :is_admin => true }, :without_protection => true)
+    #   user.name       # => "Josh"
+    #   user.is_admin?  # => true
+    def assign_attributes(new_attributes, options = {})
       return unless new_attributes
 
-      new_attributes.each do |key, value|
-        if self.methods.include? "#{key}="
-          self.send("#{key}=", value)
-        end
+      attributes = new_attributes.stringify_keys
+      @mass_assignment_options = options
+
+      attributes = sanitize_for_mass_assignment(attributes, mass_assignment_role)
+          
+      attributes.each do |key, value|
+        if respond_to? "#{key}=" 
+          send("#{key}=", value) 
+        else
+          raise(Exceptions::UnknownAttribute, "unknown attribute: #{key}")
+        end 
       end
+
+      @mass_assignment_options = nil
+    end
+
+    def mass_assignment_options
+      @mass_assignment_options ||= {}
+    end
+
+    def mass_assignment_role
+      mass_assignment_options[:as] || :default
     end
 
     def id

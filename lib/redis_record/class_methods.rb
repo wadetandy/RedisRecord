@@ -27,7 +27,7 @@ module RedisRecord
               searchable = true
             end
           else
-            raise InvalidPropertyOption
+            raise RedisRecord::Exceptions::InvalidPropertyOption
           end
         end
 
@@ -36,7 +36,7 @@ module RedisRecord
           sym = sym.to_sym 
 
           if properties.include? sym
-            raise PropertyExists
+            raise RedisRecord::Exceptions::PropertyExists
           end
 
           properties << sym
@@ -63,7 +63,7 @@ module RedisRecord
               found_id = redis.get "#{klass}:#{sym}:#{value}"
               if found_id
                 if found_id != id
-                  raise NotUnique
+                  raise RedisRecord::Exceptions::NotUnique
                 end
               else
                 if send(sym)

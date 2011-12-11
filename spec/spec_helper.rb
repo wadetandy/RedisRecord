@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 
-require 'redis_record' 
+require 'redis_record'
 require 'mock_redis'
 
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
