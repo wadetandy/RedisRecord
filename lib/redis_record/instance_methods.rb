@@ -45,6 +45,7 @@ module RedisRecord
 
       assign_attributes(new_attributes)
     end
+
     # Allows you to set all the attributes for a particular mass-assignment
     # security role by passing in a hash of attributes with keys matching
     # the attribute names (which again matches the column names) and the role
@@ -94,12 +95,11 @@ module RedisRecord
       @mass_assignment_options = nil
     end
 
-    def mass_assignment_options
-      @mass_assignment_options ||= {}
-    end
-
-    def mass_assignment_role
-      mass_assignment_options[:as] || :default
+    # Returns true if the specified +attribute+ has been set by the user or by a database load and is neither
+        # nil nor empty? (the latter only applies to objects that respond to empty?, most notably Strings).
+    def attribute_present?(attribute)
+      value = respond_to?(attribute) ? send(attribute) : nil
+      !value.nil? || (value.respond_to?(:empty?) && !value.empty?)
     end
 
     def id
@@ -122,6 +122,14 @@ module RedisRecord
     protected
       def id=(val)
         @id = val
+      end
+
+      def mass_assignment_options
+        @mass_assignment_options ||= {}
+      end
+
+      def mass_assignment_role
+        mass_assignment_options[:as] || :default
       end
 
   end

@@ -30,6 +30,12 @@ describe "RedisRecord model instance methods" do
     @user.email.should eq "harry.burns@gmail.com"
   end
 
+  it "should be able to query whether an attribute is set" do
+    @user.attribute_present?(:name).should eq false
+    @user.name = "Harry"    
+    @user.attribute_present?(:name).should eq true
+  end
+
   it "should raise an error if an invalid property is mass-assigned" do
     lambda {@user.assign_attributes(:address => "123 Main St.")}.should raise_error RedisRecord::Exceptions::UnknownAttribute
   end
