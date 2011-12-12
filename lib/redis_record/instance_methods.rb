@@ -111,9 +111,13 @@ module RedisRecord
       @id
     end
 
-    def ==(other)
-      self.class == other.class and @id == other.id
+    def ==(comparison_object)
+      super ||
+        comparison_object.instance_of?(self.class) &&
+        id.present? &&
+        comparison_object.id == id
     end
+    alias :eql? :==
 
     def persisted?
       @id ? true : false

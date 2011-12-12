@@ -71,6 +71,20 @@ describe "RedisRecord model instance methods" do
     @user.name.should eq "name"
   end
 
+  it "should be able to test for equality" do
+    @user2 = User.new
+    
+    @user.send("id=", 1)
+    @user2.send("id=", 2)
+    @user.==(@user2).should eq false
+
+    @user2.send("id=", 1)
+    @user.==(@user2).should eq true
+
+    str_val = "sample string"
+    @user.==(str_val).should eq false
+  end
+
   after(:each) do
     # Since we add to the class definition for each test, we need to undefine it so we can redeclare it next time
     User.properties.clear
