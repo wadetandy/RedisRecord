@@ -2,6 +2,10 @@
 
 RedisRecord is a ruby gem designed to be a light-weight replacement for the popular ActiveRecord library.  RedisRecord uses the [Redis](http://redis.io) storage system instead of a traditional relational database. RedisRecord uses the `redis` gem in the background to perform all data storage communications.
 
+###Note
+
+RedisRecord is still very much a work in progress.  I am still in the process of adding additional specs to ensure functionality works as expected.  Additionally, some of the APIs may change as the gem moves toward a 1.0 release.  Keep this in mind as you use it in your projects, as future releases may break parts of the existing system as additional design choices are made.  Please open issues for any bugs you may find and I will fix them as quickly as I can.
+
 ##Basic Usage
 
 To use RedisRecord in your own models, you should require the gem and have create a subclass of RedisRecord::Base:
