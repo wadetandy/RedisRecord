@@ -71,18 +71,90 @@ describe "RedisRecord model instance methods" do
     @user.name.should eq "name"
   end
 
-  it "should be able to test for equality" do
+  it "should be equal to itself" do
+    @user.send("id=", 1)
+
+    @user.==(@user).should eq true
+  end
+
+  it "should be equal another instance of the same class with the same id" do
+    @user2 = User.new
+    
+    @user.send("id=", 1)
+    @user2.send("id=", 1)
+    @user.==(@user2).should eq true
+  end
+
+  it "should not be equal another instance of the same class with a different id" do
     @user2 = User.new
     
     @user.send("id=", 1)
     @user2.send("id=", 2)
     @user.==(@user2).should eq false
+  end
 
+  it "should not be equal to an instance of a different class" do
+    class Article < RedisRecord::Base
+    end
+    @article = Article.new
+    @article.send("id=", 1)
+
+    @user.==(@article).should eq false
+  end
+
+  it "should always return the same hash value for a given instance" do
+    @user.send("id=", 1)
+
+    @user.hash.should eq @user.hash
+  end
+
+  it "should have a hash equal to the hash of another instance of the same class with the same id" do
+    @user2 = User.new
+    
+    @user.send("id=", 1)
     @user2.send("id=", 1)
-    @user.==(@user2).should eq true
+    @user.hash.should eq @user2.hash
+  end
 
-    str_val = "sample string"
-    @user.==(str_val).should eq false
+  it "should have a hash not equal to the hash of another instance of the same class with a different id" do
+    @user2 = User.new
+    
+    @user.send("id=", 1)
+    @user2.send("id=", 2)
+    @user.hash.should_not eq @user2.hash
+  end
+
+  it "should have a hash not equal to the hash of an instance of a different class" do
+    class Article < RedisRecord::Base
+    end
+    @article = Article.new
+    @article.send("id=", 1)
+
+    @user.hash.should_not eq @article.hash
+  end
+
+  it "should be able to destroy a given instance" do
+    id = @user.id
+    user2 = User.find(id)
+    user2.should eq @user
+
+    @user.destroy
+
+    user2 = User.find(id)
+    user2.should eq nil
+  end
+
+  it "should remove all data when an instance is destroyed" do
+    id = @user.id
+    @user.name = "name"
+    @redis_mock.get("user:id:#{id}").should eq id.to_s
+    @redis_mock.hget("user:id:#{id}:hash","name").should eq "name"
+    @redis_mock.zrange("user:all", 0, -1).include?(id).should eq true
+
+    @user.destroy
+    @redis_mock.get("user:id:#{id}").should eq nil
+    @redis_mock.hget("user:id:#{id}:hash","name").should eq nil
+    @redis_mock.zrange("user:all", 0, -1).include?(id).should eq false
   end
 
   after(:each) do

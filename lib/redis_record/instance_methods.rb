@@ -16,6 +16,12 @@ module RedisRecord
       assign_attributes(attributes) if attributes
     end
 
+    def destroy
+      redis.del "#{klass}:id:#{@id}"
+      redis.zrem "#{klass}:all", @id
+      redis.del "#{klass}:id:#{@id}:hash"
+    end
+
     # Returns true if the given attribute is in the attributes hash
     def has_attribute?(attr_name)
       @attributes.has_key?(attr_name.to_sym)
@@ -104,9 +110,9 @@ module RedisRecord
 
     def id
       if !@id
-        @id ||= redis.incr "#{self.class.name.underscore}:counter"
-        redis.set "#{self.class.name.underscore}:id:#{@id}", @id 
-        redis.rpush "#{self.class.name.underscore}:all", @id
+        @id ||= redis.incr "#{klass}:counter"
+        redis.set "#{klass}:id:#{@id}", @id 
+        redis.zadd "#{klass}:all", @id, @id
       end
       @id
     end
@@ -118,6 +124,10 @@ module RedisRecord
         comparison_object.id == id
     end
     alias :eql? :==
+
+    def hash
+      [@id].hash
+    end
 
     def persisted?
       @id ? true : false
@@ -134,6 +144,10 @@ module RedisRecord
 
       def mass_assignment_role
         mass_assignment_options[:as] || :default
+      end
+
+      def klass
+        self.class.name.underscore
       end
 
   end

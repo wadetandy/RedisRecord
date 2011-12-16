@@ -15,7 +15,6 @@ module RedisRecord
       # To declare a property, do the following in the class definition:
       #   property :property_name
       def property (*args)
-        klass = self.name.underscore
         options = args.extract_options!
         searchable = false
 
@@ -88,7 +87,7 @@ module RedisRecord
 
       # Every RedisResource is searchable by the id property
       def find(id)
-        found_id = redis.get "#{self.name.underscore}:id:#{id}"
+        found_id = redis.get "#{klass}:id:#{id}"
 
         if found_id
           object = self.new
@@ -99,7 +98,7 @@ module RedisRecord
 
       # Retrieve every instance of the current object
       def all
-        id_list = redis.lrange "#{self.name.underscore}:all", 0, -1
+        id_list = redis.zrange "#{klass}:all", 0, -1
 
         obj_list = []
         id_list.each do |obj_id|
@@ -124,6 +123,11 @@ module RedisRecord
 
         @@properties[self.name] ||= Set.new << :id
       end
+
+      protected
+        def klass
+          self.name.underscore
+        end
     end
   end
 end
