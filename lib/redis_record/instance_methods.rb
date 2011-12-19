@@ -3,10 +3,15 @@ require 'active_support/core_ext/string/inflections'
 
 module RedisRecord
   class Base
+    # Returns the Redis instance being used by 
     def redis
-      RedisRecord::Backend::redis_server
+      @redis ||= self.class.redis
     end
 
+    def redis=(redis_connection)
+      @redis = redis_connection
+    end
+    
     def initialize(attributes = nil)
       @attributes = Hash.new
       self.class.properties.each do |key|
@@ -21,6 +26,7 @@ module RedisRecord
       redis.zrem "#{klass}:all", @id
       redis.del "#{klass}:id:#{@id}:hash"
     end
+
 
     # Returns true if the given attribute is in the attributes hash
     def has_attribute?(attr_name)
@@ -150,6 +156,7 @@ module RedisRecord
         self.class.name.underscore
       end
 
+      
   end
 end
 

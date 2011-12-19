@@ -114,9 +114,21 @@ module RedisRecord
         obj_list
       end
           
-      # Access the redis backend directly
+      # Access the Redis connection directly
       def redis
-        RedisRecord::Backend::redis_server
+        @@redis ||= Hash.new
+
+        if superclass != Object
+          @@redis[klass] || superclass.redis
+        else
+          @@redis[klass] || RedisRecord::Backend::redis_server
+        end
+      end
+
+      # Sets a custom Redis connection for this and all subclasses
+      def redis=(redis_object)
+        @@redis ||= Hash.new
+        @@redis[klass] = redis_object
       end
 
       # We need to keep track of each class' properties.  Since the @@properties class variable 

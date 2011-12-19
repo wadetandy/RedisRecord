@@ -16,8 +16,28 @@ describe RedisRecord::Base do
     User.properties.include?(:name).should eq true
   end
 
-  it "should use a custom redis instance if one is declared" do
-    User.redis.should eq @redis_mock
+  it "should use the standard Redis connection by default" do
+    RedisRecord::Base.redis.should eq @redis_mock
+  end
+
+  it "should be able to specify a custom Redis connection" do
+    @redis_mock_custom = MockRedis.new
+    User.redis = @redis_mock_custom
+    User.redis.should eq @redis_mock_custom
+    
+    # Reset for the next test
+    User.redis = nil
+  end
+
+  it "should use the Redis connection of its parent class by default" do
+    class Admin < User
+    end
+
+    @redis_mock_custom = MockRedis.new
+    User.redis = @redis_mock_custom
+    Admin.redis.should eq @redis_mock_custom
+
+    User.redis = nil
   end
 
   it "should create a getter when a property is declared" do
@@ -58,6 +78,12 @@ describe RedisRecord::Base do
     result.kind_of?(Array).should eq true
     result.count.should eq 2
     result.to_set.should eq user_set
+  end
+
+  it "should return an empty array if all objects are requested and none exist" do
+    result = User.all
+    result.kind_of?(Array).should eq true
+    result.empty?.should eq true
   end
 
   after(:each) do

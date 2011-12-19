@@ -11,6 +11,27 @@ describe "RedisRecord model instance methods" do
     end
     @user = User.new
   end
+  
+  context "Redis Connection" do
+    it "should use the standard Redis connection by default" do
+      @user.redis.should eq RedisRecord::Backend::redis_server 
+    end
+
+    it "should use the Redis connection of its class if one is declared" do
+      @redis_mock_custom = MockRedis.new
+      User.redis = @redis_mock_custom
+      @user.redis.should eq @redis_mock_custom
+
+      User.redis = nil
+    end
+
+    it "should be able to specify a custom Redis connection for a given instance" do
+      @redis_mock_custom = MockRedis.new
+      @user.redis = @redis_mock_custom
+      User.redis.should eq @redis_mock
+      @user.redis.should eq @redis_mock_custom
+    end
+  end
 
   it "should mass-assign attributes passed to the constructor" do
     @user = User.new :name => "Harry", :email => "harry.burns@gmail.com"
@@ -51,10 +72,6 @@ describe "RedisRecord model instance methods" do
 
   it "should raise an error when someone tries to change the id" do
     lambda {@user.id = 4}.should raise_error NoMethodError, /protected method `id='/
-  end
-
-  it "should use a custom redis instance if one is declared" do
-    @user.redis.should eq @redis_mock
   end
 
   it "should be able to set a property" do
