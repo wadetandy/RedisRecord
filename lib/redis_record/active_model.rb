@@ -7,5 +7,6 @@ module RedisRecord
     include ActiveModel::Validations
     include ActiveModel::Conversion
     include ActiveModel::MassAssignmentSecurity
+    include ActiveModel::Dirty
   end
 end

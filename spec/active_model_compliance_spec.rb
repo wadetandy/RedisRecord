@@ -2,15 +2,14 @@ require 'spec_helper'
 
 describe RedisRecord::Base do
   it_should_behave_like "ActiveModel"
-
-  context "Validations" do
-    before(:each) do
-      class User < RedisRecord::Base
-      end
-
-      @user = User.new
+  before(:each) do
+    class User < RedisRecord::Base
     end
 
+    @user = User.new
+  end
+
+  context "Validations" do
     it "should allow basic validations to be declared" do
       class User < RedisRecord::Base
         property :name
@@ -39,11 +38,6 @@ describe RedisRecord::Base do
       @user.size = "small"
       @user.valid?.should eq true
     end
-
-    after(:each) do
-      User.properties.clear
-      Object.send(:remove_const, :User)
-    end
   end
 
   context "Mass Assignment Security" do
@@ -53,8 +47,6 @@ describe RedisRecord::Base do
         property :email
         property :is_admin
       end
-
-      @user = User.new
     end
 
     it "should default to all attributes being mass-assignable" do
@@ -62,7 +54,7 @@ describe RedisRecord::Base do
 
       @user.name.should eq "Fred"
       @user.email.should eq "freddie.murcury@gmail.com"
-      @user.is_admin.should eq "true"
+      @user.is_admin.should eq true
     end
 
     it "should prevent mass-assigning attributes that are no declared accessible" do
@@ -96,10 +88,29 @@ describe RedisRecord::Base do
       @user.name.should eq "Fred"
       @user.is_admin.should eq "false"
     end
+  end
 
-    after(:each) do
-      User.properties.clear
-      Object.send(:remove_const, :User)
+  context "Dirty" do
+    before(:each) do
+      class User < RedisRecord::Base
+        property :name
+        property :email
+      end
     end
+
+    it "should be able to say whether the instance has changed" do
+      @user.respond_to?("changed?").should eq true 
+    end
+
+    it "should be able to tell whether any attributes have changed or not" do
+      @user.changed?.should eq false
+      @user.name = "Fred"
+      @user.changed?.should eq true
+    end
+  end
+
+  after(:each) do
+    User.properties.clear
+    Object.send(:remove_const, :User)
   end
 end

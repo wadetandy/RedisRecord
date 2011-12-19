@@ -40,8 +40,10 @@ module RedisRecord
 
           properties << sym
 
+          define_attribute_method sym
+
           define_method(sym) do
-            redis.hget "#{klass}:id:#{id}:hash", sym
+            @attributes[sym] ||= redis.hget "#{klass}:id:#{id}:hash", sym
           end
 
           define_method("#{sym}=") do |value|
@@ -49,6 +51,8 @@ module RedisRecord
               send("check_#{sym}_uniqueness", value)
             end
 
+            send("#{sym}_will_change!") unless value == send(sym)
+            @attributes[sym] = value 
             redis.hset "#{klass}:id:#{id}:hash", sym, value
           end
 
