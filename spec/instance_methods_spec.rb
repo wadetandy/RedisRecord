@@ -146,14 +146,14 @@ describe "RedisRecord model instance methods" do
 
   it "should remove all data when an instance is destroyed" do
     id = @user.id
-    @user.name = "name"
+    @user.name = "steve"
     @redis_mock.get("user:id:#{id}").should eq id.to_s
-    @redis_mock.hget("user:id:#{id}:hash","name").should eq "name"
+    @redis_mock.hget("user:id:#{id}:hash", :name).should eq "steve"
     @redis_mock.zrange("user:all", 0, -1).include?(id).should eq true
 
     @user.destroy
     @redis_mock.get("user:id:#{id}").should eq nil
-    @redis_mock.hget("user:id:#{id}:hash","name").should eq nil
+    @redis_mock.hget("user:id:#{id}:hash", :name).should eq nil
     @redis_mock.zrange("user:all", 0, -1).include?(id).should eq false
   end
 
