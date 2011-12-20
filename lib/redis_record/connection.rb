@@ -1,8 +1,11 @@
+require 'redis'
+require 'redis_record/helpers'
+require 'active_support/concern'
+
 module RedisRecord
   module Connection
-    def self.included(base)
-      base.extend(ClassMethods)
-    end
+    extend ActiveSupport::Concern
+    include Helpers
 
     module ClassMethods
       # Access the Redis connection used by the class.
@@ -12,7 +15,7 @@ module RedisRecord
       def redis
         @@redis ||= Hash.new
 
-        if superclass != Object
+        if superclass.respond_to? "redis"
           @@redis[klass] || superclass.redis
         else
           @@redis[klass] || RedisRecord::Backend::redis_server
