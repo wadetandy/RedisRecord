@@ -133,7 +133,17 @@ describe RedisRecord::Base do
       @user.name = "Fred"
       change_hash["name"] = [nil, "Fred"]
 
+      @user.changed.should eq ["name"]
       @user.changes.should eq change_hash
+    end
+
+    it "shoudl be able to check for changes to a specific property" do
+      @user.name_change.should eq nil
+      @user.name_changed?.should eq false
+
+      @user.name = "Fred"
+      @user.name_change.should eq [nil, "Fred"]
+      @user.name_changed?.should eq true
     end
   end
 
