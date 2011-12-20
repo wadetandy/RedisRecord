@@ -1,3 +1,7 @@
+require 'redis'
+require 'active_support/core_ext/string/inflections'
+require 'active_model'
+
 module RedisRecord
   class Base
     class << self
@@ -259,6 +263,13 @@ module RedisRecord
       end
 
     include Connection
+
+    # ActiveModel functionality
+    extend ActiveModel::Naming
+    include ActiveModel::Validations
+    include ActiveModel::Conversion
+    include ActiveModel::MassAssignmentSecurity
+    include ActiveModel::Dirty
   end
 end
 
