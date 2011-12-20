@@ -3,11 +3,13 @@ require 'active_support/core_ext/string/inflections'
 
 module RedisRecord
   class Base
-    # Returns the Redis instance being used by 
+    # Returns the Redis connection used by the instance (defaults to whatever
+    # connection is used by the class.
     def redis
       @redis ||= self.class.redis
     end
 
+    # Sets the instance to use a specific Redis connection which may be different than that of the class default
     def redis=(redis_connection)
       @redis = redis_connection
     end

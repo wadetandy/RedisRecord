@@ -114,7 +114,10 @@ module RedisRecord
         obj_list
       end
           
-      # Access the Redis connection directly
+      # Access the Redis connection used by the class.
+      # Default connection is the connection used by the superclass
+      # (and RedisRecord::Backend::redis_server) in the case of the 
+      # a non-inherited class
       def redis
         @@redis ||= Hash.new
 
