@@ -1,7 +1,25 @@
 require 'spec_helper'
 
 describe RedisRecord::Base do
-  it_should_behave_like "ActiveModel"
+  describe "ActiveModel Lint Tests" do
+    require 'test/unit/assertions'
+    require 'active_model'
+
+    include Test::Unit::Assertions
+    include ActiveModel::Lint::Tests
+
+    # to_s is to support ruby-1.9
+    ActiveModel::Lint::Tests.public_instance_methods.map{|m| m.to_s}.grep(/^test/).each do |m|
+      example m.gsub('_',' ') do
+        send m
+      end
+    end
+
+    def model
+      subject
+    end
+  end
+
   before(:each) do
     class User < RedisRecord::Base
     end
@@ -9,7 +27,7 @@ describe RedisRecord::Base do
     @user = User.new
   end
 
-  context "Validations" do
+  describe "Validations" do
     it "should allow basic validations to be declared" do
       class User < RedisRecord::Base
         property :name
@@ -40,7 +58,7 @@ describe RedisRecord::Base do
     end
   end
 
-  context "Mass Assignment Security" do
+  describe "Mass Assignment Security" do
     before(:each) do
       class User < RedisRecord::Base
         property :name
@@ -90,7 +108,7 @@ describe RedisRecord::Base do
     end
   end
 
-  context "Dirty" do
+  describe "Dirty" do
     before(:each) do
       class User < RedisRecord::Base
         property :name
