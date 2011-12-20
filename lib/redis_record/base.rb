@@ -109,7 +109,6 @@ module RedisRecord
 
         obj_list
       end
-          
 
       # We need to keep track of each class' properties.  Since the @@properties class variable 
       # will be shared by all classes implementing RedisRecord, we will assign each model 
@@ -119,11 +118,6 @@ module RedisRecord
 
         @@properties[self.name] ||= Set.new << :id
       end
-
-      protected
-        def klass
-          self.name.underscore
-        end
     end
 
     public
@@ -266,11 +260,8 @@ module RedisRecord
         mass_assignment_options[:as] || :default
       end
 
-      def klass
-        self.class.name.underscore
-      end
-
     include Connection
+    include Helpers
 
     # ActiveModel functionality
     extend ActiveModel::Naming

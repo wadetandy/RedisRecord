@@ -3,7 +3,7 @@ require 'spec_helper'
 describe RedisRecord::Base do
   describe "ActiveModel Lint Tests" do
     require 'test/unit/assertions'
-    require 'active_model'
+    require 'active_model/lint'
 
     include Test::Unit::Assertions
     include ActiveModel::Lint::Tests
@@ -124,6 +124,16 @@ describe RedisRecord::Base do
       @user.changed?.should eq false
       @user.name = "Fred"
       @user.changed?.should eq true
+    end
+
+    it "should return a hash of all changes made to the instance" do
+      change_hash = Hash.new
+      @user.changes.should eq change_hash
+
+      @user.name = "Fred"
+      change_hash["name"] = [nil, "Fred"]
+
+      @user.changes.should eq change_hash
     end
   end
 

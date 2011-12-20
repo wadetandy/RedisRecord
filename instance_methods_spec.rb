@@ -12,7 +12,7 @@ describe "RedisRecord model instance methods" do
     @user = User.new
   end
   
-  context "Redis Connection" do
+  describe "Redis Connection" do
     it "should use the standard Redis connection by default" do
       @user.redis.should eq RedisRecord::Backend::redis_server 
     end
