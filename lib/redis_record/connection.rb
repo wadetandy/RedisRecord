@@ -36,14 +36,5 @@ module RedisRecord
     def redis=(redis_connection)
       @redis = redis_connection
     end
-    
-    def initialize(attributes = nil)
-      @attributes = Hash.new
-      self.class.properties.each do |key|
-        @attributes[key] = nil
-      end
-
-      assign_attributes(attributes) if attributes
-    end
   end
 end

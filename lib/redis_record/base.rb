@@ -127,12 +127,20 @@ module RedisRecord
     end
 
     public
+      def initialize(attributes = nil)
+        @attributes = Hash.new
+        self.class.properties.each do |key|
+          @attributes[key] = nil
+        end
+
+        assign_attributes(attributes) if attributes
+      end
+
       def destroy
         redis.del "#{klass}:id:#{@id}"
         redis.zrem "#{klass}:all", @id
         redis.del "#{klass}:id:#{@id}:hash"
       end
-
 
       # Returns true if the given attribute is in the attributes hash
       def has_attribute?(attr_name)
