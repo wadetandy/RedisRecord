@@ -139,6 +139,10 @@ You may also retrieve all instances of a given class:
     employees.each do |emp|
         # Do stuff
     end
+    
+##Contributing
+
+If you are interested in contributing, open an issue to discuss the feature in quetstion.  I may be already working on it or may have a specific reason for not including it in my release.  After we discuss the feature, fork, add your code (AND SPECS), and submit a pull request. 
 
 ##License & Legal
 
